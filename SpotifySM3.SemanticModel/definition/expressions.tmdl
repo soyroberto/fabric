@@ -1,0 +1,11 @@
+expression 'DirectLake - Spotify2_Analytics_Lakehouse' =
+		let
+		    Source = AzureStorage.DataLake("https://onelake.dfs.fabric.microsoft.com/d91f59ec-1250-4694-ba8a-944d3b9f3d55/d8d1be20-f67d-4f99-991f-96e677b5a6f7", [HierarchicalNavigation=true])
+		in
+		    Source
+	lineageTag: 80a7751e-d416-480c-bbce-b1a290c495d4
+
+	annotation PBI_IncludeFutureArtifacts = False
+
+	annotation PBI_RemovedChildren = [{"remoteItemId":{"analysisServicesObject":{"sourceName":null,"sourceLineageTag":"[dbo].[universal_top_spotify_songs]"}},"objectType":"Table"}]
+

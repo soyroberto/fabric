@@ -1,0 +1,298 @@
+table universal_top_spotify_songs
+	lineageTag: 00ca9837-836b-405d-8473-e2eca964a38c
+	sourceLineageTag: [dbo].[universal_top_spotify_songs]
+
+	column spotify_id
+		dataType: string
+		lineageTag: 32a93f3d-c1c3-4678-adec-a88834949739
+		sourceLineageTag: spotify_id
+		summarizeBy: none
+		sourceColumn: spotify_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column name
+		dataType: string
+		lineageTag: 303ade3f-dd1f-43bf-a237-d69bdad9491f
+		sourceLineageTag: name
+		summarizeBy: none
+		sourceColumn: name
+
+		annotation SummarizationSetBy = Automatic
+
+	column artists
+		dataType: string
+		lineageTag: f752df7b-932a-48cf-bb40-6a16e44c5f7f
+		sourceLineageTag: artists
+		summarizeBy: none
+		sourceColumn: artists
+
+		annotation SummarizationSetBy = Automatic
+
+	column daily_rank
+		dataType: int64
+		formatString: 0
+		lineageTag: 59efd7d3-0bbb-48f5-8607-ab713e4bfcb5
+		sourceLineageTag: daily_rank
+		summarizeBy: none
+		sourceColumn: daily_rank
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column daily_movement
+		dataType: int64
+		formatString: 0
+		lineageTag: 09739d3b-5169-43ed-b609-9064c9413fd9
+		sourceLineageTag: daily_movement
+		summarizeBy: none
+		sourceColumn: daily_movement
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column weekly_movement
+		dataType: int64
+		formatString: 0
+		lineageTag: e07a650c-4eaa-4b97-a1af-654b710403cb
+		sourceLineageTag: weekly_movement
+		summarizeBy: none
+		sourceColumn: weekly_movement
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column country
+		dataType: string
+		lineageTag: e8bbef60-1f56-4e33-9fef-a5eb5bbe3906
+		sourceLineageTag: country
+		summarizeBy: none
+		sourceColumn: country
+
+		annotation SummarizationSetBy = Automatic
+
+	column snapshot_date
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 39ba53da-2844-4232-b3c0-63d1d5ce82d1
+		sourceLineageTag: snapshot_date
+		summarizeBy: none
+		sourceColumn: snapshot_date
+
+		annotation SummarizationSetBy = Automatic
+
+	column popularity
+		dataType: int64
+		formatString: 0
+		lineageTag: 31df57a4-b589-4c5f-9c0c-14de090624ec
+		sourceLineageTag: popularity
+		summarizeBy: none
+		sourceColumn: popularity
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column is_explicit
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: aeaa51b4-0862-463e-a6dc-ada198b878f6
+		sourceLineageTag: is_explicit
+		summarizeBy: none
+		sourceColumn: is_explicit
+
+		annotation SummarizationSetBy = Automatic
+
+	column duration_ms
+		dataType: int64
+		formatString: 0
+		lineageTag: 386abe1a-e7fa-4cae-823f-dc5cf825af7b
+		sourceLineageTag: duration_ms
+		summarizeBy: none
+		sourceColumn: duration_ms
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column album_name
+		dataType: string
+		lineageTag: 596e8563-f9c6-4e31-b85b-35204943c65d
+		sourceLineageTag: album_name
+		summarizeBy: none
+		sourceColumn: album_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column album_release_date
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: f84f8306-ee65-4354-985d-2403328360f3
+		sourceLineageTag: album_release_date
+		summarizeBy: none
+		sourceColumn: album_release_date
+
+		annotation SummarizationSetBy = Automatic
+
+	column danceability
+		dataType: double
+		lineageTag: 1c3689a1-a88f-4a51-bec1-00f8e5f6d10a
+		sourceLineageTag: danceability
+		summarizeBy: none
+		sourceColumn: danceability
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column energy
+		dataType: double
+		lineageTag: 684e4a6e-289f-4fe7-adcc-160e53f172a2
+		sourceLineageTag: energy
+		summarizeBy: none
+		sourceColumn: energy
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column key
+		dataType: int64
+		formatString: 0
+		lineageTag: caf372ec-82e2-4c2c-a597-0f234783c9af
+		sourceLineageTag: key
+		summarizeBy: none
+		sourceColumn: key
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column loudness
+		dataType: double
+		lineageTag: 8ef1418a-3577-4d0c-89af-f5525c655982
+		sourceLineageTag: loudness
+		summarizeBy: none
+		sourceColumn: loudness
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column mode
+		dataType: int64
+		formatString: 0
+		lineageTag: b388d11b-fe1b-4a3e-9b81-23ebea79dc8c
+		sourceLineageTag: mode
+		summarizeBy: none
+		sourceColumn: mode
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column speechiness
+		dataType: double
+		lineageTag: 671d762a-001a-4209-9767-c60b25f29eda
+		sourceLineageTag: speechiness
+		summarizeBy: none
+		sourceColumn: speechiness
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column acousticness
+		dataType: double
+		lineageTag: 199ccb4c-46c9-48cc-b55d-56237736b155
+		sourceLineageTag: acousticness
+		summarizeBy: none
+		sourceColumn: acousticness
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column instrumentalness
+		dataType: double
+		lineageTag: e4e24a3a-d2af-4601-a0f7-d59aa3f8eda4
+		sourceLineageTag: instrumentalness
+		summarizeBy: none
+		sourceColumn: instrumentalness
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column liveness
+		dataType: double
+		lineageTag: 7ba069b5-6719-4da0-a87a-1ab21f64e59f
+		sourceLineageTag: liveness
+		summarizeBy: none
+		sourceColumn: liveness
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column valence
+		dataType: double
+		lineageTag: b2a8bffa-143c-4857-856a-b0211f768596
+		sourceLineageTag: valence
+		summarizeBy: none
+		sourceColumn: valence
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column tempo
+		dataType: double
+		lineageTag: 63503072-d3e8-4df1-a3e5-8420fb8333ac
+		sourceLineageTag: tempo
+		summarizeBy: none
+		sourceColumn: tempo
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column time_signature
+		dataType: int64
+		formatString: 0
+		lineageTag: 96528314-c3a8-48a7-babc-31a3f44dfd7a
+		sourceLineageTag: time_signature
+		summarizeBy: none
+		sourceColumn: time_signature
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	partition universal_top_spotify_songs = entity
+		mode: directLake
+		source
+			entityName: universal_top_spotify_songs
+			expressionSource: 'DirectLake - Spotify_Analytics_Lakehouse'
+

@@ -1,0 +1,9 @@
+expression 'DirectLake - Spotify_Analytics_Lakehouse' =
+		let
+		    Source = AzureStorage.DataLake("https://onelake.dfs.fabric.microsoft.com/d91f59ec-1250-4694-ba8a-944d3b9f3d55/d8d1be20-f67d-4f99-991f-96e677b5a6f7", [HierarchicalNavigation=true])
+		in
+		    Source
+	lineageTag: 857e95cd-e0ff-4e1b-bba2-660572f11395
+
+	annotation PBI_IncludeFutureArtifacts = False
+

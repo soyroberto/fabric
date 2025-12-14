@@ -1,0 +1,15 @@
+{
+  "sources": [],
+  "destinations": [],
+  "streams": [
+    {
+      "id": "8fbb564f-b2e6-4a60-adec-6f92ecb0a814",
+      "name": "ehubaadfwd_event_stream-stream",
+      "type": "DefaultStream",
+      "properties": {},
+      "inputNodes": []
+    }
+  ],
+  "operators": [],
+  "compatibilityLevel": "1.0"
+}

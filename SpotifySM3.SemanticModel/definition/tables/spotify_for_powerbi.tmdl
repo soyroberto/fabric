@@ -1,0 +1,307 @@
+table spotify_for_powerbi
+	lineageTag: f00d93a5-0be7-4705-97bc-0ea7faaa74ed
+	sourceLineageTag: [dbo].[spotify_for_powerbi]
+
+	column country
+		dataType: string
+		lineageTag: ec3e4f2c-42f2-4626-b9fc-b97b3e258a85
+		sourceLineageTag: country
+		summarizeBy: none
+		sourceColumn: country
+
+		annotation SummarizationSetBy = Automatic
+
+	column spotify_id
+		dataType: string
+		lineageTag: cfdf0fe1-f062-4706-9a6f-4fd949366884
+		sourceLineageTag: spotify_id
+		summarizeBy: none
+		sourceColumn: spotify_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column name
+		dataType: string
+		lineageTag: f4eff45c-893e-4ca0-b4d2-d85f233812a8
+		sourceLineageTag: name
+		summarizeBy: none
+		sourceColumn: name
+
+		annotation SummarizationSetBy = Automatic
+
+	column artists
+		dataType: string
+		lineageTag: ca6f0fd6-41f2-4f0e-89b9-82f581ff893e
+		sourceLineageTag: artists
+		summarizeBy: none
+		sourceColumn: artists
+
+		annotation SummarizationSetBy = Automatic
+
+	column daily_rank
+		dataType: int64
+		formatString: 0
+		lineageTag: 8e672cab-69e2-4f5d-84b0-722cd210941a
+		sourceLineageTag: daily_rank
+		summarizeBy: none
+		sourceColumn: daily_rank
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column daily_movement
+		dataType: int64
+		formatString: 0
+		lineageTag: f274c20c-4893-4bb3-98cc-5f533357305c
+		sourceLineageTag: daily_movement
+		summarizeBy: none
+		sourceColumn: daily_movement
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column weekly_movement
+		dataType: int64
+		formatString: 0
+		lineageTag: 207b239f-7129-42ef-afac-793a79fd30ce
+		sourceLineageTag: weekly_movement
+		summarizeBy: none
+		sourceColumn: weekly_movement
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column chart_date
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 26b14816-6e73-42f0-8f59-a95f8e41ddb0
+		sourceLineageTag: chart_date
+		summarizeBy: none
+		sourceColumn: chart_date
+
+		annotation SummarizationSetBy = Automatic
+
+	column popularity
+		dataType: int64
+		formatString: 0
+		lineageTag: 4f04d4fb-430f-48e5-9f5b-11a084706f68
+		sourceLineageTag: popularity
+		summarizeBy: none
+		sourceColumn: popularity
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column is_explicit
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: cbcc7063-8948-4eb5-b5cc-73aaf438ca92
+		sourceLineageTag: is_explicit
+		summarizeBy: none
+		sourceColumn: is_explicit
+
+		annotation SummarizationSetBy = Automatic
+
+	column duration_ms
+		dataType: int64
+		formatString: 0
+		lineageTag: 526548a1-3170-499d-8b5e-b5ac1b4cf45c
+		sourceLineageTag: duration_ms
+		summarizeBy: none
+		sourceColumn: duration_ms
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column album_name
+		dataType: string
+		lineageTag: 0b7618a4-3226-4cf5-bdcd-6698784ca556
+		sourceLineageTag: album_name
+		summarizeBy: none
+		sourceColumn: album_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column album_release_date
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: d14eda5e-0393-4c55-8342-2ded49be2a02
+		sourceLineageTag: album_release_date
+		summarizeBy: none
+		sourceColumn: album_release_date
+
+		annotation SummarizationSetBy = Automatic
+
+	column danceability
+		dataType: double
+		lineageTag: d622d377-8d03-48a5-af34-cb0cc3647530
+		sourceLineageTag: danceability
+		summarizeBy: none
+		sourceColumn: danceability
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column energy
+		dataType: double
+		lineageTag: 10f2c602-32c0-49f2-98fb-368c6196bea0
+		sourceLineageTag: energy
+		summarizeBy: none
+		sourceColumn: energy
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column key
+		dataType: int64
+		formatString: 0
+		lineageTag: 1de57244-a15b-46c5-af25-11b63b9c12e3
+		sourceLineageTag: key
+		summarizeBy: none
+		sourceColumn: key
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column loudness
+		dataType: double
+		lineageTag: 918d6507-d367-41a7-a90b-ccfe29edcc6c
+		sourceLineageTag: loudness
+		summarizeBy: none
+		sourceColumn: loudness
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column mode
+		dataType: int64
+		formatString: 0
+		lineageTag: 84867ff5-ece5-4689-9069-9a9a2b442d31
+		sourceLineageTag: mode
+		summarizeBy: none
+		sourceColumn: mode
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column speechiness
+		dataType: double
+		lineageTag: 3b91cc4d-4cea-45ea-bfa8-d0aee5b11f81
+		sourceLineageTag: speechiness
+		summarizeBy: none
+		sourceColumn: speechiness
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column acousticness
+		dataType: double
+		lineageTag: 3cf01db4-49f6-474f-b7f1-2ee07ee38c24
+		sourceLineageTag: acousticness
+		summarizeBy: none
+		sourceColumn: acousticness
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column instrumentalness
+		dataType: double
+		lineageTag: 4f64e0bd-5089-430f-a803-c65efbab750a
+		sourceLineageTag: instrumentalness
+		summarizeBy: none
+		sourceColumn: instrumentalness
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column liveness
+		dataType: double
+		lineageTag: 5d576c5e-06be-4b5c-8323-c87ca6d7eaea
+		sourceLineageTag: liveness
+		summarizeBy: none
+		sourceColumn: liveness
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column valence
+		dataType: double
+		lineageTag: 6d7dc528-f185-43b9-b5d9-5aa853720f6d
+		sourceLineageTag: valence
+		summarizeBy: none
+		sourceColumn: valence
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column tempo
+		dataType: double
+		lineageTag: 6056ade7-6ded-4a1c-a00b-2a5768ad0d8c
+		sourceLineageTag: tempo
+		summarizeBy: none
+		sourceColumn: tempo
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column time_signature
+		dataType: int64
+		formatString: 0
+		lineageTag: 5ec6a926-239d-4fba-8048-835a8556f6cc
+		sourceLineageTag: time_signature
+		summarizeBy: none
+		sourceColumn: time_signature
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column country_name
+		dataType: string
+		lineageTag: 67844ce1-6fc1-4bae-b616-dee5c8a652e8
+		sourceLineageTag: country_name
+		summarizeBy: none
+		sourceColumn: country_name
+
+		annotation SummarizationSetBy = Automatic
+
+	partition spotify_for_powerbi = entity
+		mode: directLake
+		source
+			entityName: spotify_for_powerbi
+			expressionSource: 'DirectLake - Spotify2_Analytics_Lakehouse'
+

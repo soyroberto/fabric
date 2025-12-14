@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Notebook",
+    "displayName": "allmusicnotebook"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "581ebdb2-bb55-bec0-4906-ff06bd253e47"
+  }
+}

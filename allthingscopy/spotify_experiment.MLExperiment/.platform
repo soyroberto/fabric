@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "MLExperiment",
+    "displayName": "spotify_experiment"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "441e4925-a41c-b01d-423f-60442c34f871"
+  }
+}

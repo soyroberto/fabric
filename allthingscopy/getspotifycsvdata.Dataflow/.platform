@@ -1,0 +1,12 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Dataflow",
+    "displayName": "getspotifycsvdata",
+    "description": "Consolidate all files into one"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "1355d388-8da4-9436-42f3-632495bbdaa3"
+  }
+}

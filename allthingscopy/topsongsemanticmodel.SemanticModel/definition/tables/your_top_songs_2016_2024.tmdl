@@ -1,0 +1,445 @@
+table your_top_songs_2016_2024
+	lineageTag: bfd71c5c-c728-47b1-b3bc-3993722d4c97
+	sourceLineageTag: [dbo].[your_top_songs_2016_2024]
+
+	measure TotalMinutes = SUM('your_top_songs_2016_2024'[duration_ms]) / 60000
+		lineageTag: 25ab15d7-a20a-43d7-a651-ab3b4f2506b3
+
+		changedProperty = Name
+
+		changedProperty = FormatString
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure TotalHours = SUM('your_top_songs_2016_2024'[duration_ms]) / 3600000
+		lineageTag: 93ec9ba3-3ea4-4dcd-8c68-1c1b64143f80
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure ExplicitCount = COUNTROWS(FILTER('your_top_songs_2016_2024', 'your_top_songs_2016_2024'[explicit] = TRUE()))
+		lineageTag: bee0eab1-324d-40b6-9608-adc5762ef45b
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure AvgTrackMinutes = AVERAGE('your_top_songs_2016_2024'[duration_ms]) / 60000
+		lineageTag: 3a0317bc-c57c-4ee1-8003-5d154fc26d45
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure MaxPopularity = MAX('your_top_songs_2016_2024'[popularity])
+		lineageTag: de738208-d3df-429d-828b-c771cc8f583c
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure AvgDanceability = AVERAGE('your_top_songs_2016_2024'[danceability])
+		formatString: 0
+		lineageTag: aa6d2d1f-9d29-4ae8-bb39-26b9d4ad62c9
+
+		changedProperty = Name
+
+	measure AvgEnergy = AVERAGE('your_top_songs_2016_2024'[energy])
+		formatString: 0
+		lineageTag: 9ab10707-a581-4fdb-b293-a3b122699d77
+
+		changedProperty = Name
+
+	measure AvgLoudness = AVERAGE('your_top_songs_2016_2024'[loudness])
+		formatString: 0
+		lineageTag: d4bc8673-2bca-4fca-af2c-1153d1a60e33
+
+		changedProperty = Name
+
+	measure Measure
+		lineageTag: 7b66e670-2d9d-4d10-ad98-2ee01f8c452b
+
+		annotation 43dbc3e8-3a1c-4b6f-9923-b49ff7d6691c = True
+
+	measure ListeningGoalMinutes = 50000
+		formatString: 0
+		lineageTag: d3a1082d-1abd-4190-8ac6-05782650dba0
+
+		changedProperty = Name
+
+	measure AvgPopularity = AVERAGE('your_top_songs_2016_2024'[popularity])
+		lineageTag: 7342b715-d5c6-4dcc-8a01-e6aaa40552d9
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure PopularityTarget = 60
+		formatString: 0
+		lineageTag: 889d6d71-8781-44d0-9241-3b47085dd8bd
+
+		changedProperty = Name
+
+	measure GoalMaxMinutes = [ListeningGoalMinutes] * 1.1
+		lineageTag: f745f3be-e21b-4558-8279-704ab13e303f
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column track_uri
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: fdaaacca-2818-4fca-ba36-c75ec0e595bc
+		sourceLineageTag: track_uri
+		summarizeBy: none
+		sourceColumn: track_uri
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column track_name
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: b2a79065-cadc-4f24-b516-704f03e26d7a
+		sourceLineageTag: track_name
+		summarizeBy: none
+		sourceColumn: track_name
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column album_name
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: d0c7b5c8-6804-46c4-b3b3-2d35b12c0bdb
+		sourceLineageTag: album_name
+		summarizeBy: none
+		sourceColumn: album_name
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column artist_names
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 20659902-1931-4d60-aaea-eb80a4f81a92
+		sourceLineageTag: artist_names
+		summarizeBy: none
+		sourceColumn: artist_names
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column release_date
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: fdae527b-8156-4033-87ee-d280f5335144
+		sourceLineageTag: release_date
+		summarizeBy: none
+		sourceColumn: release_date
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column duration_ms
+		dataType: int64
+		formatString: 0
+		sourceProviderType: varchar(8000)
+		lineageTag: 1f03c04a-ee89-46af-b97f-0867d0a94a0b
+		sourceLineageTag: duration_ms
+		summarizeBy: sum
+		sourceColumn: duration_ms
+
+		changedProperty = IsHidden
+
+		changedProperty = DataType
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column popularity
+		dataType: int64
+		formatString: 0
+		sourceProviderType: varchar(8000)
+		lineageTag: 0d6f7554-5ddd-4d56-91fe-df510f931cd5
+		sourceLineageTag: popularity
+		summarizeBy: sum
+		sourceColumn: popularity
+
+		changedProperty = IsHidden
+
+		changedProperty = DataType
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column explicit
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: b5c7a1fc-e75f-4b4c-984b-09eaf6ecea51
+		sourceLineageTag: explicit
+		summarizeBy: none
+		sourceColumn: explicit
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column added_by
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: e9f3d768-f6e2-4aae-9832-c7a6afb0e69e
+		sourceLineageTag: added_by
+		summarizeBy: none
+		sourceColumn: added_by
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column added_at
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 691fccb5-1d24-44b6-8f07-86f9e5814bf9
+		sourceLineageTag: added_at
+		summarizeBy: none
+		sourceColumn: added_at
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column genres
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: dc6608ce-db25-4db3-b8a6-282c83faddc3
+		sourceLineageTag: genres
+		summarizeBy: none
+		sourceColumn: genres
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column record_label
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 9babc56b-f377-4cec-99c3-4fa89027980a
+		sourceLineageTag: record_label
+		summarizeBy: none
+		sourceColumn: record_label
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column danceability
+		dataType: double
+		sourceProviderType: varchar(8000)
+		lineageTag: 3818689b-6f59-4c15-979a-09bd97459ec0
+		sourceLineageTag: danceability
+		summarizeBy: average
+		sourceColumn: danceability
+
+		changedProperty = IsHidden
+
+		changedProperty = DataType
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column energy
+		dataType: double
+		sourceProviderType: varchar(8000)
+		lineageTag: 9a1e2c9b-2a30-4f8e-aefd-8c8cab3edeb4
+		sourceLineageTag: energy
+		summarizeBy: average
+		sourceColumn: energy
+
+		changedProperty = IsHidden
+
+		changedProperty = DataType
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column key
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 49f76c33-d635-4fd6-9f93-187cd3f09cb8
+		sourceLineageTag: key
+		summarizeBy: none
+		sourceColumn: key
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column loudness
+		dataType: double
+		formatString: 0
+		sourceProviderType: varchar(8000)
+		lineageTag: 6e64fec3-cc32-4fb7-8359-89716409c369
+		sourceLineageTag: loudness
+		summarizeBy: average
+		sourceColumn: loudness
+
+		changedProperty = IsHidden
+
+		changedProperty = DataType
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+		annotation PBI_FormatHint = {"isDecimal":true}
+
+	column mode
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 0d080706-1bf0-4e4a-8488-3473fc992995
+		sourceLineageTag: mode
+		summarizeBy: none
+		sourceColumn: mode
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column speechiness
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 95ca914e-5572-4252-ab75-2c36cd6ba518
+		sourceLineageTag: speechiness
+		summarizeBy: none
+		sourceColumn: speechiness
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column acousticness
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 8b0ad374-36ac-4384-a842-e655ce52aefe
+		sourceLineageTag: acousticness
+		summarizeBy: none
+		sourceColumn: acousticness
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column instrumentalness
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 614e0c47-6ebb-4205-8d7c-d6817a9d85f4
+		sourceLineageTag: instrumentalness
+		summarizeBy: none
+		sourceColumn: instrumentalness
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column liveness
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 494753d0-d091-45a3-91fd-1f6a56bd23c2
+		sourceLineageTag: liveness
+		summarizeBy: none
+		sourceColumn: liveness
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column valence
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: b1122790-990c-4681-9ff3-3e915e9e0ef1
+		sourceLineageTag: valence
+		summarizeBy: none
+		sourceColumn: valence
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column tempo
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: dfea9faf-0a0c-467b-94e3-1ecda39f2f5f
+		sourceLineageTag: tempo
+		summarizeBy: none
+		sourceColumn: tempo
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column time_signature
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: cf3888e1-e028-41da-bf1b-2bc08249a7ca
+		sourceLineageTag: time_signature
+		summarizeBy: none
+		sourceColumn: time_signature
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column ytyear
+		dataType: int64
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 087b7936-13a4-47cc-ac9b-43cdd10a3e40
+		sourceLineageTag: ytyear
+		summarizeBy: none
+		sourceColumn: ytyear
+
+		changedProperty = IsHidden
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column source_file
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 4519752b-c94e-4e16-8d69-1048ca4be6fd
+		sourceLineageTag: source_file
+		summarizeBy: none
+		sourceColumn: source_file
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	partition your_top_songs_2016_2024 = entity
+		mode: directLake
+		source
+			entityName: your_top_songs_2016_2024
+			schemaName: dbo
+			expressionSource: DatabaseQuery
+
+	changedProperty = IsHidden
+
+	annotation PBI_ResultType = Table
+

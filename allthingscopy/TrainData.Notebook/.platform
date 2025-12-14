@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Notebook",
+    "displayName": "TrainData"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "17701fa4-fa31-921a-4b97-43e9acc47be9"
+  }
+}

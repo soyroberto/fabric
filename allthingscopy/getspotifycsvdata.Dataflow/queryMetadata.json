@@ -1,0 +1,37 @@
+{
+  "formatVersion": "202502",
+  "computeEngineSettings": {},
+  "name": "getcsvdata",
+  "queryGroups": [],
+  "documentLocale": "en-AU",
+  "queriesMetadata": {
+    "your_top_songs_2016 1": {
+      "queryId": "d17e422b-b520-485f-8c86-7bc2a0c85357",
+      "queryName": "your_top_songs_2016 1",
+      "loadEnabled": false
+    },
+    "DefaultDestination": {
+      "queryId": "d5faf7fa-355e-460f-8f31-14fffba99df5",
+      "queryName": "DefaultDestination",
+      "isHidden": true,
+      "loadEnabled": false
+    }
+  },
+  "connections": [
+    {
+      "path": "https://eduzseni-my.sharepoint.com/personal/roberto_rober_to/",
+      "kind": "Web",
+      "connectionId": "{\"ClusterId\":\"9ec2ed7e-a11e-4dad-a36c-8d09b29ae270\",\"DatasourceId\":\"bce1dc8b-9445-45b5-a8b9-9a844fa5c264\"}"
+    },
+    {
+      "path": "https://eduzseni-my.sharepoint.com/",
+      "kind": "SharePoint",
+      "connectionId": "{\"ClusterId\":\"9ec2ed7e-a11e-4dad-a36c-8d09b29ae270\",\"DatasourceId\":\"0a973cdf-3cb2-4f64-bf3c-63f8f75d491f\"}"
+    },
+    {
+      "path": "Lakehouse",
+      "kind": "Lakehouse",
+      "connectionId": "{\"ClusterId\":\"9ec2ed7e-a11e-4dad-a36c-8d09b29ae270\",\"DatasourceId\":\"a468335c-f09c-4e60-bb29-445e407046fc\"}"
+    }
+  ]
+}

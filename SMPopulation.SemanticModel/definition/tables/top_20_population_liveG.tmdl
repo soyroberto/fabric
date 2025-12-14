@@ -1,0 +1,155 @@
+table top_20_population_liveG
+	lineageTag: df6d113a-abee-4b98-b648-09853b4f4456
+	sourceLineageTag: [dbo].[top_20_population_liveG]
+
+	column #
+		dataType: int64
+		formatString: 0
+		lineageTag: e8184d87-20a6-457e-9bf1-97f0247d2904
+		sourceLineageTag: #
+		summarizeBy: none
+		sourceColumn: #
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column Country_or_dependency
+		dataType: string
+		lineageTag: c8a1a003-f130-484e-9bcb-2fc7c69282bc
+		sourceLineageTag: Country_or_dependency
+		summarizeBy: none
+		sourceColumn: Country_or_dependency
+
+		annotation SummarizationSetBy = Automatic
+
+	column Population_2025
+		dataType: int64
+		formatString: 0
+		lineageTag: 470d8315-eb57-4d1d-aaae-5d9b5c2be943
+		sourceLineageTag: Population_2025
+		summarizeBy: sum
+		sourceColumn: Population_2025
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column Yearly_Change
+		dataType: double
+		lineageTag: 93ac5151-180b-4355-b49f-2498a0409cdb
+		sourceLineageTag: Yearly_Change
+		summarizeBy: average
+		sourceColumn: Yearly_Change
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Net_Change
+		dataType: double
+		lineageTag: 2394b327-bce1-4c80-9e33-4d7f6ed40f8d
+		sourceLineageTag: Net_Change
+		summarizeBy: sum
+		sourceColumn: Net_Change
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Density_P/Km2
+		dataType: double
+		lineageTag: ffb5265a-0fbc-4c48-ac6f-f8fd8020b873
+		sourceLineageTag: Density_P/Km2
+		summarizeBy: average
+		sourceColumn: Density_P/Km2
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Land_Area_Km2
+		dataType: int64
+		formatString: 0
+		lineageTag: 42b75c5e-f91f-4cdd-8fbb-d6d6038cab3a
+		sourceLineageTag: Land_Area_Km2
+		summarizeBy: sum
+		sourceColumn: Land_Area_Km2
+
+		annotation SummarizationSetBy = Automatic
+
+	column Migrants_net
+		dataType: double
+		lineageTag: 88252516-7fe7-441d-b350-6c498361226f
+		sourceLineageTag: Migrants_net
+		summarizeBy: sum
+		sourceColumn: Migrants_net
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Fert_Rate
+		dataType: double
+		lineageTag: eb813760-c358-409e-b31d-05eaf70b25d2
+		sourceLineageTag: Fert_Rate
+		summarizeBy: average
+		sourceColumn: Fert_Rate
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Median_Age
+		dataType: double
+		formatString: 0.00
+		lineageTag: b59b2976-e18b-492e-a2c6-1a5a3476c0be
+		sourceLineageTag: Median_Age
+		summarizeBy: average
+		sourceColumn: Median_Age
+
+		changedProperty = SummarizeBy
+
+		changedProperty = FormatString
+
+		annotation SummarizationSetBy = User
+
+	column Urban_Pop_Pct
+		dataType: int64
+		isNullable: false
+		formatString: 0
+		lineageTag: 2d7437de-2142-4189-8c4e-5c6c59447301
+		sourceLineageTag: Urban_Pop_Pct
+		summarizeBy: average
+		sourceColumn: Urban_Pop_Pct
+
+		changedProperty = SummarizeBy
+
+		changedProperty = DataType
+
+		annotation SummarizationSetBy = User
+
+	column World_Share
+		dataType: int64
+		formatString: 0
+		lineageTag: f4c13238-18b6-42c0-8596-f53a9de0ccce
+		sourceLineageTag: World_Share
+		summarizeBy: sum
+		sourceColumn: World_Share
+
+		changedProperty = DataType
+
+		annotation SummarizationSetBy = Automatic
+
+	partition top_20_population_liveG = entity
+		mode: directLake
+		source
+			entityName: top_20_population_liveG
+			expressionSource: 'DirectLake - PopulationDataLake'
+

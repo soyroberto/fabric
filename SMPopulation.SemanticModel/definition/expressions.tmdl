@@ -1,0 +1,11 @@
+expression 'DirectLake - PopulationDataLake' =
+		let
+		    Source = AzureStorage.DataLake("https://onelake.dfs.fabric.microsoft.com/f8a8e7cb-a246-415d-a682-ccb1108926ba/35d7d41a-389b-4dff-9883-7c781276d341", [HierarchicalNavigation=true])
+		in
+		    Source
+	lineageTag: 0cba09c6-a7bf-4971-b1a1-d65e036683a4
+
+	annotation PBI_IncludeFutureArtifacts = False
+
+	annotation PBI_RemovedChildren = [{"remoteItemId":{"analysisServicesObject":{"sourceName":null,"sourceLineageTag":"[dbo].[top_20_population_live]"}},"objectType":"Table"}]
+

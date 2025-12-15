@@ -289,3 +289,68 @@ for table_name in tables_to_check:
 # META   "language": "sparksql",
 # META   "language_group": "synapse_pyspark"
 # META }
+
+# MARKDOWN ********************
+
+# ## Real Time (+/-)
+
+# CELL ********************
+
+# First, load your historical data
+df_history = spark.table("top_20_population_liveg").toPandas()
+
+# Create the Animation
+import plotly.express as px
+
+fig = px.bar(
+    df_history, 
+    # ERROR FIX 1: The error log lists 'Population_2025', not 'Population'
+    x="Population_2025", 
+    y="Country_or_dependency", 
+    # ERROR FIX 2: The error log lists 'Country_or_dependency', not 'Country'
+    color="Country_or_dependency", 
+    animation_frame="Scrape_Timestamp", 
+    # ERROR FIX 3: Must match the column name exactly
+    animation_group="Country_or_dependency",
+    range_x=[0, 1_600_000_000], 
+    orientation='h',
+    title="Live Population Growth Race"
+)
+
+fig.update_layout(yaxis={'categoryorder':'total ascending'})
+fig.show()
+
+# METADATA ********************
+
+# META {
+# META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }
+
+# MARKDOWN ********************
+
+# ### No realtime
+
+# CELL ********************
+
+import plotly.express as px
+
+# Create a static bar chart (No animation)
+fig = px.bar(
+    df_history, 
+    x="Population_2025", 
+    y="Country_or_dependency", 
+    color="Country_or_dependency", 
+    orientation='h',
+    title="Current Population (Static Snapshot)"
+)
+
+fig.update_layout(yaxis={'categoryorder':'total ascending'})
+fig.show()
+
+# METADATA ********************
+
+# META {
+# META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }

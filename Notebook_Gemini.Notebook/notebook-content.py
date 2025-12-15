@@ -22,12 +22,17 @@
 
 # CELL ********************
 
-#No real time table
+#time track added
+#Data Ingestion ETL
+#main data gatherer
+#added tracking table: top_20_population_table
 
+# Real-time History Table Script
 import requests
 from bs4 import BeautifulSoup
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import col, regexp_replace, trim
+# Added current_timestamp to imports
+from pyspark.sql.functions import col, regexp_replace, trim, current_timestamp 
 from pyspark.sql.types import StructType, StructField, StringType, LongType, DoubleType
 
 def scrape_worldometers_top20():
@@ -48,25 +53,21 @@ def scrape_worldometers_top20():
     
     target_table = None
     
-    # IMPROVED LOGIC: Iterate through ALL tables and check ALL headers
+    # Iterate through ALL tables and check ALL headers
     tables = soup.find_all("table")
     for table in tables:
-        # Get all header cells for this table
         headers_refs = table.find_all("th")
         header_texts = [h.get_text(strip=True) for h in headers_refs]
         
-        # We look for a table that definitely contains "Country" and "Population" in its headers
-        # We use 'any' to check if "Country" exists in ANY of the headers, not just the first one
         if any("Country" in h for h in header_texts) and any("Population" in h for h in header_texts):
             target_table = table
             break
             
     if not target_table:
-        print("Could not locate the population table. The website structure might have changed.")
+        print("Could not locate the population table.")
         return None, None
 
     # Extract clean column names
-    # Replace newlines, % signs, and spaces for Spark compatibility
     headers_html = target_table.find_all("th")
     columns = []
     for th in headers_html:
@@ -76,12 +77,8 @@ def scrape_worldometers_top20():
 
     # Extract Rows
     data = []
-    # Try finding rows in tbody, if not, try direct children (some tables are malformed)
     rows_container = target_table.find("tbody") if target_table.find("tbody") else target_table
     rows = rows_container.find_all("tr")
-    
-    # Skip header row if it's inside tbody or if we selected the table directly
-    # We filter for rows that actually have 'td' cells
     valid_rows = [r for r in rows if r.find_all("td")]
 
     # Limit to Top 20
@@ -89,7 +86,6 @@ def scrape_worldometers_top20():
         cols = row.find_all("td")
         row_data = [col.get_text(strip=True) for col in cols]
         
-        # Ensure row length matches column length to avoid index errors
         if len(row_data) == len(columns):
             data.append(row_data)
 
@@ -99,25 +95,12 @@ def create_pyspark_df(spark, columns, data):
     if not data:
         return None
 
-    # 1. Create Raw DataFrame
-    # We create it as StringType first to handle the raw scraped text safely
     df = spark.createDataFrame(data, schema=columns)
     
-    # 2. Data Cleaning & Type Casting
-    # We will clean the common numeric columns:
-    # - Remove commas (e.g., "1,234")
-    # - Remove plus signs/percentages (e.g., "+0.5 %")
-    
-    # Identify potential numeric columns by name keywords
     for col_name in columns:
         if any(x in col_name for x in ["#", "Population", "Area", "Density", "Change", "Rate", "Age", "Migrants"]):
-            
-            # Remove non-numeric characters (keep digits, dots, and minus signs)
-            # This regex removes anything that IS NOT a digit, a dot, or a minus.
             df = df.withColumn(col_name, regexp_replace(col(col_name), "[^0-9.-]", ""))
             
-            # Handle empty strings that result from cleaning (turn them into nulls) or N/A
-            # Then cast to Double (safest) or Long
             if "Population" in col_name or "Area" in col_name or "#" == col_name:
                  df = df.withColumn(col_name, col(col_name).cast(LongType()))
             else:
@@ -125,32 +108,11 @@ def create_pyspark_df(spark, columns, data):
 
     return df
 
-# --- Main Execution ---
+# --- Main Execution (Consolidated) ---
 
 spark = SparkSession.builder \
-    .appName("WorldometersScraperFixed") \
+    .appName("WorldometersRealTime") \
     .getOrCreate()
-
-print("Scraping data...")
-cols, raw_data = scrape_worldometers_top20()
-
-if raw_data and cols:
-    print(f"Found {len(raw_data)} rows. Creating DataFrame...")
-    
-    final_df = create_pyspark_df(spark, cols, raw_data)
-    
-    if final_df:
-        print("Top 20 Largest Countries by Population:")
-        final_df.show(20, truncate=False)
-        final_df.printSchema()
-    else:
-        print("Failed to create DataFrame.")
-else:
-    print("Scraping returned no data.")
-
-    # --- Main Execution ---
-
-spark = SparkSession.builder.getOrCreate()
 
 print("1. Scraping data...")
 cols, raw_data = scrape_worldometers_top20()
@@ -160,25 +122,26 @@ if raw_data and cols:
     final_df = create_pyspark_df(spark, cols, raw_data)
     
     if final_df:
-        # Define your table name
-        table_name = "top_20_population_liveG"
+        # --- MODIFICATION: Add Timestamp for History --- for tendency and visualization
+        print("3. Adding timestamp column...")
+        final_df = final_df.withColumn("Scrape_Timestamp", current_timestamp())
+        table_name = "top_20_population_history" # tracking history table
         
-        print(f"3. Saving to Fabric Lakehouse table: '{table_name}'...")
+        print(f"4. Appending to Fabric Lakehouse table: '{table_name}'...")
         
-        # Write to Delta Lake
-        # mode("overwrite") ensures that if you run this tomorrow, it updates the data
+        # --- MODIFICATION: Change to 'append' mode ---
         final_df.write \
             .format("delta") \
-            .mode("overwrite") \
+            .mode("append") \
             .option("mergeSchema", "true") \
             .saveAsTable(table_name)
             
-        print("4. Success! Data saved.")
+        print("5. Success! Data appended.")
         
-        # --- VERIFICATION METHOD 1: PROGRAMMATIC ---
-        print("--- Verifying by reading back from Lakehouse ---")
+        # Verify by showing the latest 5 entries sorted by time
+        print("--- Verifying latest data ---")
         saved_df = spark.table(table_name)
-        saved_df.show(15, truncate=False)
+        saved_df.orderBy(col("Scrape_Timestamp").desc()).show(5, truncate=False)
         
     else:
         print("Failed to create DataFrame.")
@@ -217,69 +180,6 @@ spark.table("top_20_population_liveG").show()
 
 # CELL ********************
 
-from pyspark.sql import SparkSession
-spark = SparkSession.builder.getOrCreate()
-
-print("📅 CHECKING TABLE CREATION TIMES")
-print("=" * 60)
-
-# List all tables
-print("\n📋 ALL TABLES IN LAKEHOUSE:")
-spark.sql("SHOW TABLES").show(truncate=False)
-
-# Get detailed info for specific tables
-tables_to_check = ["Top_20_population_liveg", "Top_20_Population_liveG"]
-
-for table_name in tables_to_check:
-    print(f"\n🔍 TABLE: {table_name}")
-    try:
-        # Method A: DESCRIBE EXTENDED (shows everything)
-        print("Method A: Using DESCRIBE EXTENDED")
-        info_df = spark.sql(f"DESCRIBE EXTENDED {table_name}")
-        
-        # Filter for creation time info
-        creation_info = info_df.filter(
-            (info_df.col_name.contains("Created")) | 
-            (info_df.col_name.contains("Time")) |
-            (info_df.col_name.contains("Date"))
-        ).collect()
-        
-        if creation_info:
-            for row in creation_info:
-                print(f"   {row['col_name']}: {row['data_type']}")
-        else:
-            print("   No creation time found in DESCRIBE EXTENDED")
-        
-        # Method B: Check file timestamps
-        print("\nMethod B: Checking file system timestamps")
-        try:
-            location_df = info_df.filter(info_df.col_name.contains("Location")).collect()
-            if location_df:
-                location = location_df[0]['data_type']
-                print(f"   Table location: {location}")
-                
-                # Try to list files and get their timestamps
-                files_df = spark.sql(f"SHOW FILES IN `{location}`")
-                if files_df.count() > 0:
-                    oldest = files_df.agg({"modificationTime": "min"}).collect()[0][0]
-                    newest = files_df.agg({"modificationTime": "max"}).collect()[0][0]
-                    print(f"   Oldest file: {oldest}")
-                    print(f"   Newest file: {newest}")
-        except:
-            print("   Could not check file timestamps")
-            
-    except Exception as e:
-        print(f"   ❌ Error checking {table_name}: {e}")
-
-# METADATA ********************
-
-# META {
-# META   "language": "python",
-# META   "language_group": "synapse_pyspark"
-# META }
-
-# CELL ********************
-
 # MAGIC %%sql
 # MAGIC SELECT  country_or_dependency,format_number(Population_2025, 0) AS population, Yearly_Change, format_number(Net_Change, 0) as Population_Change FROM top_20_population_liveg ORDER BY Yearly_Change DESC;
 
@@ -292,33 +192,43 @@ for table_name in tables_to_check:
 
 # MARKDOWN ********************
 
-# ## Real Time (+/-)
+# ## Scheduled Graphic Run in Fabric
 
 # CELL ********************
 
-# First, load your historical data
-df_history = spark.table("top_20_population_liveg").toPandas()
+# First, load your historical data from the CORRECT table.
+# This table is assumed to have been created by the 'append' script, 
+# which added the 'Scrape_Timestamp' column.
 
-# Create the Animation
-import plotly.express as px
+# Load the PySpark Delta table into a Pandas DataFrame for Plotly 
+df_history = spark.table("top_20_population_history").toPandas()
 
-fig = px.bar(
-    df_history, 
-    # ERROR FIX 1: The error log lists 'Population_2025', not 'Population'
-    x="Population_2025", 
-    y="Country_or_dependency", 
-    # ERROR FIX 2: The error log lists 'Country_or_dependency', not 'Country'
-    color="Country_or_dependency", 
-    animation_frame="Scrape_Timestamp", 
-    # ERROR FIX 3: Must match the column name exactly
-    animation_group="Country_or_dependency",
-    range_x=[0, 1_600_000_000], 
-    orientation='h',
-    title="Live Population Growth Race"
-)
+# Verify that the timestamp column exists in the Pandas DataFrame before plotting
+if 'Scrape_Timestamp' not in df_history.columns:
+    print("Error: 'Scrape_Timestamp' column not found in the 'top_20_population_history' table.")
+    print("Please ensure the data ingestion script (with .mode('append')) has run at least once.")
+else:
+    # Create the Animation
+    import plotly.express as px
 
-fig.update_layout(yaxis={'categoryorder':'total ascending'})
-fig.show()
+    # The column names are based on the output of your scraper's cleaning logic
+    fig = px.bar(
+        df_history, 
+        x="Population_2025", 
+        y="Country_or_dependency", 
+        color="Country_or_dependency", 
+        # This is the key that was missing from the old table
+        animation_frame="Scrape_Timestamp", 
+        animation_group="Country_or_dependency",
+        # Use a dynamic range based on the data max value
+        range_x=[0, df_history['Population_2025'].max() * 1.1], 
+        orientation='h',
+        title="🌎 Live Population Growth Race (Historical Data)"
+    )
+
+    # Sort the y-axis (Countries) to show the largest population at the top of each frame
+    fig.update_layout(yaxis={'categoryorder':'total ascending'})
+    fig.show()
 
 # METADATA ********************
 
@@ -352,20 +262,41 @@ fig.show()
 
 # MARKDOWN ********************
 
-# ### No realtime
+# ### Time stamped Graphic
 
 # CELL ********************
 
 import plotly.express as px
+import pandas as pd
+from pyspark.sql.functions import col # Need to import col for orderBy
 
-# Create a static bar chart (No animation)
+
+df_history_spark = spark.table("top_20_population_history") # Assuming this is the history table
+
+# --- Step 1: Find the most recent timestamp ---
+# Get the latest row based on the Scrape_Timestamp
+latest_timestamp_row = df_history_spark.orderBy(col("Scrape_Timestamp").desc()).limit(1).collect()
+
+# Extract the datetime object
+if latest_timestamp_row:
+    latest_timestamp = latest_timestamp_row[0]['Scrape_Timestamp']
+    # Format the timestamp for a clean title display
+    formatted_time = latest_timestamp.strftime("%Y-%m-%d %H:%M:%S %Z")
+else:
+    formatted_time = "Data Timestamp Unknown"
+
+# --- Step 2: Convert to Pandas for Plotly ---
+df_history = df_history_spark.toPandas()
+
+# --- Step 3: Create the Static Bar Chart with the Time in the Title ---
 fig = px.bar(
     df_history, 
     x="Population_2025", 
     y="Country_or_dependency", 
     color="Country_or_dependency", 
     orientation='h',
-    title="Current Population (Static Snapshot)"
+    # ADDED: Dynamic title using the latest timestamp
+    title=f"Current Population (Static Snapshot) - Data as of: **{formatted_time}**"
 )
 
 fig.update_layout(yaxis={'categoryorder':'total ascending'})
@@ -375,5 +306,17 @@ fig.show()
 
 # META {
 # META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }
+
+# CELL ********************
+
+# MAGIC %%sql
+# MAGIC select Scrape_Timestamp from top_20_population_history
+
+# METADATA ********************
+
+# META {
+# META   "language": "sparksql",
 # META   "language_group": "synapse_pyspark"
 # META }

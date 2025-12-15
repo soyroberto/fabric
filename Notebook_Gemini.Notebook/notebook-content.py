@@ -228,7 +228,7 @@ print("\n📋 ALL TABLES IN LAKEHOUSE:")
 spark.sql("SHOW TABLES").show(truncate=False)
 
 # Get detailed info for specific tables
-tables_to_check = ["Top_20_population_live", "Top_20_Population_liveG"]
+tables_to_check = ["Top_20_population_liveg", "Top_20_Population_liveG"]
 
 for table_name in tables_to_check:
     print(f"\n🔍 TABLE: {table_name}")
@@ -275,5 +275,17 @@ for table_name in tables_to_check:
 
 # META {
 # META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }
+
+# CELL ********************
+
+# MAGIC %%sql
+# MAGIC SELECT  country_or_dependency,format_number(Population_2025, 0) AS population, Yearly_Change, format_number(Net_Change, 0) as Population_Change FROM top_20_population_liveg ORDER BY Yearly_Change DESC;
+
+# METADATA ********************
+
+# META {
+# META   "language": "sparksql",
 # META   "language_group": "synapse_pyspark"
 # META }

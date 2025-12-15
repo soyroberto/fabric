@@ -1,12 +1,11 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
   "metadata": {
-    "type": "Notebook",
-    "displayName": "WebPopScrapper",
-    "description": "New notebook"
+    "type": "Warehouse",
+    "displayName": "StagingWarehouseForDataflows_20251202012243"
   },
   "config": {
     "version": "2.0",
-    "logicalId": "62dfecbb-61fb-95c5-4e24-f98f2af6fba9"
+    "logicalId": "37ba5011-5e03-aaa9-4b24-979f5ea8c9e6"
   }
 }

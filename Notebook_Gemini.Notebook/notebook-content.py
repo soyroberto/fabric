@@ -327,6 +327,29 @@ fig.show()
 # META   "language_group": "synapse_pyspark"
 # META }
 
+# CELL ********************
+
+#Global Heatmap
+import plotly.graph_objects as go
+
+fig = go.Figure(data=go.Choropleth(
+    locations=df_history['Country_or_dependency'], # Ensure these match standard country names
+    locationmode='country names',
+    z=df_history['Population_2025'],
+    colorscale='Viridis',
+    colorbar_title="Population"
+))
+
+fig.update_layout(title_text='World Population Density', geo=dict(projection_type='orthographic')) # 'orthographic' gives a 3D globe view
+fig.show()
+
+# METADATA ********************
+
+# META {
+# META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }
+
 # MARKDOWN ********************
 
 # ### No realtime

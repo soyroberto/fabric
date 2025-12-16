@@ -157,24 +157,24 @@ else:
 
 # CELL ********************
 
-spark.table("top_20_population_liveG").show()
+#Show latest updated Timestamp
+from pyspark.sql.functions import col
+
+# 1. Load the table
+xt = spark.table("top_20_population_history")
+
+# 2. Order by timestamp descending, select only the Scrape_TimeStamp column, and show the top 1 row
+latest_time = (
+    xt.orderBy(col("Scrape_TimeStamp").desc())
+    .select("Scrape_TimeStamp")
+    .limit(1)
+    .show(truncate=False)
+)
 
 # METADATA ********************
 
 # META {
 # META   "language": "python",
-# META   "language_group": "synapse_pyspark"
-# META }
-
-# CELL ********************
-
-# MAGIC %%sql
-# MAGIC SELECT * FROM top_20_population_liveG 
-
-# METADATA ********************
-
-# META {
-# META   "language": "sparksql",
 # META   "language_group": "synapse_pyspark"
 # META }
 
@@ -262,7 +262,7 @@ fig.show()
 
 # MARKDOWN ********************
 
-# ### Time stamped Graphic
+# ### Time stamped Graphic no slice
 
 # CELL ********************
 
@@ -309,14 +309,64 @@ fig.show()
 # META   "language_group": "synapse_pyspark"
 # META }
 
+# MARKDOWN ********************
+
+# ### Prep for PowerBI
+
 # CELL ********************
 
-# MAGIC %%sql
-# MAGIC select Scrape_Timestamp from top_20_population_history
+from pyspark.sql.functions import date_trunc, datediff, lag, lit
+from pyspark.sql.window import Window
+
+# 1. Load the history table
+df = spark.table("top_20_population_history")
+
+# 2. Define a window specification to calculate daily change per country
+# Partition by Country_or_dependency and order by Scrape_Timestamp
+window_spec = Window.partitionBy("Country_or_dependency").orderBy("Scrape_Timestamp")
+
+# 3. Calculate the population from the *previous* recorded snapshot (LAG)
+df_calculated = df.withColumn(
+    "Previous_Population", 
+    lag(col("Population_2025"), 1).over(window_spec)
+)
+
+# 4. Calculate the 'Net_Population_Change_Snapshot'
+# Use lit(None).cast("long") for the first row where previous population is null
+df_calculated = df_calculated.withColumn(
+    "Net_Population_Change_Snapshot", 
+    col("Population_2025") - col("Previous_Population")
+)
+
+# 5. Create a clean "Gold" layer table for Power BI consumption
+# We will use 'gold_population_metrics' for the Power BI reports
+df_calculated.write \
+    .format("delta") \
+    .mode("overwrite") \
+    .option("mergeSchema", "true") \
+    .saveAsTable("gold_population_metrics")
+
+print("Gold layer table 'gold_population_metrics' created successfully for Power BI.")
 
 # METADATA ********************
 
 # META {
-# META   "language": "sparksql",
+# META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }
+
+# CELL ********************
+
+# Run this in your Fabric Notebook
+spark.table("gold_population_metrics") \
+    .orderBy(col("Scrape_Timestamp").desc()) \
+    .filter(col("Country_or_dependency") == "China") \
+    .select("Population_2025") \
+    .limit(1).show()
+
+# METADATA ********************
+
+# META {
+# META   "language": "python",
 # META   "language_group": "synapse_pyspark"
 # META }

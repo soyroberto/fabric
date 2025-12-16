@@ -75,3 +75,24 @@ df_calculated.write \
 # META   "language": "python",
 # META   "language_group": "synapse_pyspark"
 # META }
+
+# CELL ********************
+
+from pyspark.sql.functions import col, max
+
+GOLD_TABLE_NAME = "top_20_population_gold" # Checking the SILVER table this time
+
+print(f"--- Re-Checking Maximum Scrape Timestamp in {GOLD_TABLE_NAME} ---")
+
+# Find the Absolute Latest Timestamp
+latest_timestamp_df = spark.table(GOLD_TABLE_NAME).agg(max(col("Scrape_Timestamp")).alias("LatestTime"))
+latest_time = latest_timestamp_df.collect()[0]['LatestTime']
+
+print(f"\n✅ Latest Timestamp AFTER Run: {latest_time}")
+
+# METADATA ********************
+
+# META {
+# META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }

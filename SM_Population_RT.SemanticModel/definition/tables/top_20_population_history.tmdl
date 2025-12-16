@@ -1,0 +1,143 @@
+table top_20_population_history
+	lineageTag: e3e3eb12-b1e6-491b-9374-03dfb649b9df
+	sourceLineageTag: [dbo].[top_20_population_history]
+
+	column #
+		dataType: int64
+		formatString: 0
+		lineageTag: c971066e-e829-47aa-901a-bfa2f45c3646
+		sourceLineageTag: #
+		summarizeBy: sum
+		sourceColumn: #
+
+		annotation SummarizationSetBy = Automatic
+
+	column Country_or_dependency
+		dataType: string
+		lineageTag: b406e06c-4db9-42ce-8192-f7aa636545c0
+		sourceLineageTag: Country_or_dependency
+		summarizeBy: none
+		sourceColumn: Country_or_dependency
+
+		annotation SummarizationSetBy = Automatic
+
+	column Population_2025
+		dataType: int64
+		formatString: 0
+		lineageTag: a7fd2518-b366-4ad9-a51f-9b1b3488c02a
+		sourceLineageTag: Population_2025
+		summarizeBy: sum
+		sourceColumn: Population_2025
+
+		annotation SummarizationSetBy = Automatic
+
+	column Yearly_Change
+		dataType: double
+		lineageTag: 05b9b4f2-23b0-41e7-8907-a38ec4ecbb91
+		sourceLineageTag: Yearly_Change
+		summarizeBy: sum
+		sourceColumn: Yearly_Change
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Net_Change
+		dataType: double
+		lineageTag: 7110f2f6-b037-4dfa-b9b1-07ede5febdb6
+		sourceLineageTag: Net_Change
+		summarizeBy: sum
+		sourceColumn: Net_Change
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Density_P/Km2
+		dataType: double
+		lineageTag: b23eda26-4588-460b-b873-90adbfc00a9f
+		sourceLineageTag: Density_P/Km2
+		summarizeBy: sum
+		sourceColumn: Density_P/Km2
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Land_Area_Km2
+		dataType: int64
+		formatString: 0
+		lineageTag: 5596a294-793a-4930-916a-89f2c7af2b8d
+		sourceLineageTag: Land_Area_Km2
+		summarizeBy: sum
+		sourceColumn: Land_Area_Km2
+
+		annotation SummarizationSetBy = Automatic
+
+	column Migrants_net
+		dataType: double
+		lineageTag: 682c08d3-1750-4a4e-9489-b61b967828e4
+		sourceLineageTag: Migrants_net
+		summarizeBy: sum
+		sourceColumn: Migrants_net
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Fert_Rate
+		dataType: double
+		lineageTag: c7afbb2a-d3b3-4851-bf8f-6d3ae75cc9c3
+		sourceLineageTag: Fert_Rate
+		summarizeBy: sum
+		sourceColumn: Fert_Rate
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Median_Age
+		dataType: double
+		lineageTag: d371b9cb-d63a-4309-9886-305fb319fe0a
+		sourceLineageTag: Median_Age
+		summarizeBy: sum
+		sourceColumn: Median_Age
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Urban_Pop_Pct
+		dataType: string
+		lineageTag: 88d9a62d-fd84-4cee-a688-940b12e6df37
+		sourceLineageTag: Urban_Pop_Pct
+		summarizeBy: none
+		sourceColumn: Urban_Pop_Pct
+
+		annotation SummarizationSetBy = Automatic
+
+	column World_Share
+		dataType: string
+		lineageTag: cdd1b852-fb81-4c45-839a-8d2d48a4bdc9
+		sourceLineageTag: World_Share
+		summarizeBy: none
+		sourceColumn: World_Share
+
+		annotation SummarizationSetBy = Automatic
+
+	column Scrape_Timestamp
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 60d3b757-4287-40a6-8d3a-a53efd239cf4
+		sourceLineageTag: Scrape_Timestamp
+		summarizeBy: none
+		sourceColumn: Scrape_Timestamp
+
+		annotation SummarizationSetBy = Automatic
+
+	partition top_20_population_history = entity
+		mode: directLake
+		source
+			entityName: top_20_population_history
+			expressionSource: 'DirectLake - PopulationDataLake'
+

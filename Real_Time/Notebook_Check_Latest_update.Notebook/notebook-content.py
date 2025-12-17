@@ -22,36 +22,40 @@
 
 # CELL ********************
 
+#check silver timestamp
 from pyspark.sql.functions import col, max
-from pyspark.sql.window import Window
-from pyspark.sql import SparkSession
 
-# Get Spark Session (if not already running)
-spark = SparkSession.builder.appName("LatestDataCheck").getOrCreate()
+GOLD_TABLE_NAME = "top_20_population_silver" # Checking the SILVER table this time
 
-# --- 1. Define the table to check ---
-GOLD_TABLE_NAME = "top_20_population_silver"
+print(f"--- Re-Checking Maximum Scrape Timestamp in {GOLD_TABLE_NAME} ---")
 
-print(f"--- Checking Maximum Scrape Timestamp in {GOLD_TABLE_NAME} ---")
-
-# --- 2. Find the Absolute Latest Timestamp ---
+# Find the Absolute Latest Timestamp
 latest_timestamp_df = spark.table(GOLD_TABLE_NAME).agg(max(col("Scrape_Timestamp")).alias("LatestTime"))
-
-# Extract the value for clear display
 latest_time = latest_timestamp_df.collect()[0]['LatestTime']
 
-if latest_time:
-    # --- 3. Display the Latest Time and the Data Associated with It ---
-    print(f"\n✅ Absolute Latest Data Timestamp Found: {latest_time}")
-    
-    # Filter the table to show all rows recorded at that exact latest timestamp
-    latest_data = spark.table(GOLD_TABLE_NAME).filter(col("Scrape_Timestamp") == latest_time)
-    
-    print("\n--- Latest Population Snapshot (All Countries) ---")
-    latest_data.orderBy(col("Population_2025").desc()).show(20, truncate=False)
-    
-else:
-    print("❌ Error: No data found in the table.")
+print(f"\n✅ Latest Timestamp AFTER Run: {latest_time}")
+
+# METADATA ********************
+
+# META {
+# META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }
+
+# CELL ********************
+
+#Check Gold timestamp
+from pyspark.sql.functions import col, max
+
+GOLD_TABLE_NAME = "top_20_population_gold" # Checking the SILVER table this time
+
+print(f"--- Re-Checking Maximum Scrape Timestamp in {GOLD_TABLE_NAME} ---")
+
+# Find the Absolute Latest Timestamp
+latest_timestamp_df = spark.table(GOLD_TABLE_NAME).agg(max(col("Scrape_Timestamp")).alias("LatestTime"))
+latest_time = latest_timestamp_df.collect()[0]['LatestTime']
+
+print(f"\n✅ Latest Timestamp AFTER Run: {latest_time}")
 
 # METADATA ********************
 

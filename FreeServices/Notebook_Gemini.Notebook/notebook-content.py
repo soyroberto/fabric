@@ -22,6 +22,7 @@
 
 # CELL ********************
 
+# borrar
 #time track added
 #Data Ingestion ETL
 #main data gatherer
@@ -157,11 +158,34 @@ else:
 
 # CELL ********************
 
-#Show latest updated Timestamp
+#Show latest updated Timestamp in the Silver table
 from pyspark.sql.functions import col
 
 # 1. Load the table
 xt = spark.table("top_20_population_history")
+
+# 2. Order by timestamp descending, select only the Scrape_TimeStamp column, and show the top 1 row
+latest_time = (
+    xt.orderBy(col("Scrape_TimeStamp").desc())
+    .select("Scrape_TimeStamp")
+    .limit(1)
+    .show(truncate=False)
+)
+
+# METADATA ********************
+
+# META {
+# META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }
+
+# CELL ********************
+
+#Show latest in the gold table
+from pyspark.sql.functions import col
+
+# 1. Load the table
+xt = spark.table("gold_population_metrics")
 
 # 2. Order by timestamp descending, select only the Scrape_TimeStamp column, and show the top 1 row
 latest_time = (
@@ -201,7 +225,7 @@ latest_time = (
 # which added the 'Scrape_Timestamp' column.
 
 # Load the PySpark Delta table into a Pandas DataFrame for Plotly 
-df_history = spark.table("top_20_population_history").toPandas()
+df_history = spark.table("gold_population_metrics").toPandas()
 
 # Verify that the timestamp column exists in the Pandas DataFrame before plotting
 if 'Scrape_Timestamp' not in df_history.columns:
@@ -271,7 +295,7 @@ import pandas as pd
 from pyspark.sql.functions import col # Need to import col for orderBy
 
 
-df_history_spark = spark.table("top_20_population_history") # Assuming this is the history table
+df_history_spark = spark.table("gold_population_metrics") # Assuming this is the history table
 
 # --- Step 1: Find the most recent timestamp ---
 # Get the latest row based on the Scrape_Timestamp
@@ -347,22 +371,6 @@ df_calculated.write \
     .saveAsTable("gold_population_metrics")
 
 print("Gold layer table 'gold_population_metrics' created successfully for Power BI.")
-
-# METADATA ********************
-
-# META {
-# META   "language": "python",
-# META   "language_group": "synapse_pyspark"
-# META }
-
-# CELL ********************
-
-# Run this in your Fabric Notebook
-spark.table("gold_population_metrics") \
-    .orderBy(col("Scrape_Timestamp").desc()) \
-    .filter(col("Country_or_dependency") == "China") \
-    .select("Population_2025") \
-    .limit(1).show()
 
 # METADATA ********************
 

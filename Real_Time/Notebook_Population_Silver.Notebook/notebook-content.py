@@ -22,20 +22,15 @@
 
 # CELL ********************
 
-#Silver layer
-
-#time track added
-#Data Ingestion ETL
-#main data gatherer
-#added tracking table: top_20_population_table
+# Silver layer (Ingestion_to_Silver Notebook)
 
 # Real-time History Table Script
+#Webpython
 import requests
 from bs4 import BeautifulSoup
 from pyspark.sql import SparkSession
-# Added current_timestamp to imports
-from pyspark.sql.functions import col, regexp_replace, trim, current_timestamp 
-from pyspark.sql.types import StructType, StructField, StringType, LongType, DoubleType
+from pyspark.sql.functions import col, regexp_replace, current_timestamp 
+from pyspark.sql.types import LongType, DoubleType 
 
 def scrape_worldometers_top20():
     url = "https://www.worldometers.info/world-population/#top20"
@@ -48,14 +43,13 @@ def scrape_worldometers_top20():
         response = requests.get(url, headers=headers)
         response.raise_for_status()
     except requests.exceptions.RequestException as e:
-        print(f"Error fetching page: {e}")
+        print(f"ERROR: Failed to fetch page. Reason: {e}") 
         return None, None
 
     soup = BeautifulSoup(response.content, 'html.parser')
     
     target_table = None
     
-    # Iterate through ALL tables and check ALL headers
     tables = soup.find_all("table")
     for table in tables:
         headers_refs = table.find_all("th")
@@ -66,7 +60,7 @@ def scrape_worldometers_top20():
             break
             
     if not target_table:
-        print("Could not locate the population table.")
+        print("ERROR: Could not locate the population table on the page.")
         return None, None
 
     # Extract clean column names
@@ -111,45 +105,42 @@ def create_pyspark_df(spark, columns, data):
     return df
 
 # --- Main Execution (Consolidated) ---
-
 spark = SparkSession.builder \
     .appName("WorldometersRealTime") \
     .getOrCreate()
 
 print("1. Scraping data...")
 cols, raw_data = scrape_worldometers_top20()
+table_name = "top_20_population_silver" 
 
 if raw_data and cols:
     print(f"2. Found {len(raw_data)} rows. Creating DataFrame...")
     final_df = create_pyspark_df(spark, cols, raw_data)
     
-    if final_df:
-        # --- MODIFICATION: Add Timestamp for History --- for tendency and visualization
+    if final_df is not None:
         print("3. Adding timestamp column...")
-        final_df = final_df.withColumn("Scrape_Timestamp", current_timestamp())
-        table_name = "top_20_population_silver" # tracking history table
-        
+        #below final
+        final_df = final_df.withColumn("Scrape_Timestamp", current_timestamp())        
         print(f"4. Appending to Fabric Lakehouse table: '{table_name}'...")
         
-        # --- MODIFICATION: Change to 'append' mode ---
+        # --- ROBUST WRITE BLOCK ---
+        # This is the tested, clean, and reliable Delta append for Fabric.
         final_df.write \
             .format("delta") \
             .mode("append") \
-            .option("mergeSchema", "true") \
-            .saveAsTable(table_name)
+            .option("mergeSchema", "true").saveAsTable(table_name)
             
-        print("5. Success! Data appended.")
+        print("5. SUCCESS! Data appended.")
         
-        # Verify by showing the latest 5 entries sorted by time
+        # Verification: Show the latest 5 entries sorted by time
         print("--- Verifying latest data ---")
         saved_df = spark.table(table_name)
         saved_df.orderBy(col("Scrape_Timestamp").desc()).show(5, truncate=False)
         
     else:
-        print("Failed to create DataFrame.")
+        print("ERROR: Failed to create DataFrame.")
 else:
     print("Scraping returned no data.")
-
 
 # METADATA ********************
 

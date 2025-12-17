@@ -22,52 +22,80 @@
 
 # CELL ********************
 
-#Gold Layer final set for Reports
-#16/12/25
+# Gold Layer final set for Reports (Cache Invalidation Fix)
 
-from pyspark.sql.functions import col, lag, when, lit
+from pyspark.sql.functions import col, lag
 from pyspark.sql.window import Window
 
-# --- 1. Load the history table (Silver Layer) ---
-df = spark.table("top_20_population_silver")
+print("1. Loading current Silver data...")
 
-# --- 2. Filter Out Duplicate Consecutive Population Values (Fixing the 'Same Value' Issue) ---
-window_spec = Window.partitionBy("Country_or_dependency").orderBy("Scrape_Timestamp")
+try:
+    # --- CRITICAL FIX: Invalidate Cache ---
+    print("1a. Refreshing Silver table metadata cache...")
+    spark.catalog.refreshTable("top_20_population_silver")
+    
+    # --- 1. Load the history table (Silver Layer) ---
+    df = spark.table("top_20_population_silver")
 
-df_with_prev_val = df.withColumn(
-    "Prev_Population_Raw", 
-    lag(col("Population_2025"), 1).over(window_spec)
-)
+    # --- 2. Filter Out Duplicate Consecutive Population Values ---
+    # ... (rest of the logic is unchanged and correct) ...
+    window_spec = Window.partitionBy("Country_or_dependency").orderBy("Scrape_Timestamp")
 
-# Keep only rows where population has changed or it's the first row (NULL)
-df_unique_population = df_with_prev_val.filter(
-    (col("Population_2025") != col("Prev_Population_Raw")) | 
-    col("Prev_Population_Raw").isNull()
-).drop("Prev_Population_Raw")
+    df_with_prev_val = df.withColumn(
+        "Prev_Population_Raw", 
+        lag(col("Population_2025"), 1).over(window_spec)
+    )
 
-
-# --- 3. Calculate Net Change on the Cleaned Data ---
-
-# Re-run LAG on the unique values to find the actual change between updates
-window_spec_clean = Window.partitionBy("Country_or_dependency").orderBy("Scrape_Timestamp")
-
-df_calculated = df_unique_population.withColumn(
-    "Previous_Population", 
-    lag(col("Population_2025"), 1).over(window_spec_clean)
-)
-
-df_calculated = df_calculated.withColumn(
-    "Net_Population_Change_Snapshot", 
-    col("Population_2025") - col("Previous_Population")
-)
+    df_unique_population = df_with_prev_val.filter(
+        (col("Population_2025") != col("Prev_Population_Raw")) | 
+        col("Prev_Population_Raw").isNull()
+    ).drop("Prev_Population_Raw")
 
 
-# --- 4. Overwrite the Gold Layer Table for Power BI ---
-df_calculated.write \
-    .format("delta") \
-    .mode("overwrite") \
-    .option("mergeSchema", "true") \
-    .saveAsTable("top_20_population_gold")
+    # --- 3. Calculate Net Change on the Cleaned Data ---
+
+    window_spec_clean = Window.partitionBy("Country_or_dependency").orderBy("Scrape_Timestamp")
+
+    df_calculated = df_unique_population.withColumn(
+        "Previous_Population", 
+        lag(col("Population_2025"), 1).over(window_spec_clean)
+    ).withColumn(
+        "Net_Population_Change_Snapshot", 
+        col("Population_2025") - col("Previous_Population")
+    )
+    
+    # --- 4. Select Final Columns for Power BI ---
+    print("2. Selecting final report columns...")
+    
+    final_columns = [
+        col("#"),
+        col("Country_or_dependency"),
+        col("Population_2025"),
+        col("Yearly_Change"),
+        col("Net_Population_Change_Snapshot"), 
+        col("Previous_Population"),           
+        col("Density_P/Km2"),
+        col("Land_Area_Km2"),
+        col("Scrape_Timestamp")              
+    ]
+    
+    df_final = df_calculated.select(*final_columns)
+
+
+    # --- 5. Overwrite the Gold Layer Table (CRITICAL WRITE) ---
+    print("3. Attempting to OVERWRITE the Gold Layer table...")
+
+    df_final.write \
+        .format("delta") \
+        .mode("overwrite") \
+        .saveAsTable("top_20_population_gold_v2")
+        
+    print("4. SUCCESS: Gold Layer table overwritten.")
+
+except Exception as e:
+    print(f"CRITICAL ERROR in Gold Layer Transformation: {e}")
+    
+spark.sql("ANALYZE TABLE top_20_population_gold_v2 COMPUTE STATISTICS")
 
 # METADATA ********************
 
@@ -78,17 +106,32 @@ df_calculated.write \
 
 # CELL ********************
 
-from pyspark.sql.functions import col, max
+#fundamental step to clear cache and avoid time stamp stuckness / Roberto
+from pyspark.sql import functions as F
 
-GOLD_TABLE_NAME = "top_20_population_gold" # Checking the SILVER table this time
 
-print(f"--- Re-Checking Maximum Scrape Timestamp in {GOLD_TABLE_NAME} ---")
+# 1. FORCE THE CACHE TO CLEAR
+spark.catalog.refreshTable("top_20_population_silver")
 
-# Find the Absolute Latest Timestamp
-latest_timestamp_df = spark.table(GOLD_TABLE_NAME).agg(max(col("Scrape_Timestamp")).alias("LatestTime"))
-latest_time = latest_timestamp_df.collect()[0]['LatestTime']
+# 2. READ SILVER
+silver_df = spark.table("top_20_population_silver")
 
-print(f"\n✅ Latest Timestamp AFTER Run: {latest_time}")
+# 3. QUICK CHECK -  
+max_silver = silver_df.select(F.max("Scrape_Timestamp")).collect()[0][0]
+print(f"Latest timestamp detected in Silver source: {max_silver}")
+
+# 4. PERFORM YOUR TRANSFORMATION (Example Logic)
+# Make sure your transformation uses the silver_df we just refreshed
+gold_df = silver_df.orderBy(F.col("Scrape_Timestamp").desc())
+
+# 5. OVERWRITE GOLD
+gold_df.write \
+    .format("delta") \
+    .mode("overwrite") \
+    .option("overwriteSchema", "true") \
+    .saveAsTable("top_20_population_gold_v2")
+
+print("Gold table overwrite complete.")
 
 # METADATA ********************
 

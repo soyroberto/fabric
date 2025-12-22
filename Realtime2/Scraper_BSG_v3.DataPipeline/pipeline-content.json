@@ -1,0 +1,170 @@
+{
+  "properties": {
+    "activities": [
+      {
+        "type": "TridentNotebook",
+        "typeProperties": {
+          "notebookId": "3a9a1e4d-f029-bdf5-4196-5f5cc996597d",
+          "workspaceId": "00000000-0000-0000-0000-000000000000"
+        },
+        "policy": {
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "Bronze",
+        "dependsOn": []
+      },
+      {
+        "type": "TridentNotebook",
+        "typeProperties": {
+          "notebookId": "d0ea4216-accd-9bdb-4f48-09caf9b234e7",
+          "workspaceId": "00000000-0000-0000-0000-000000000000"
+        },
+        "policy": {
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "Silver",
+        "dependsOn": [
+          {
+            "activity": "Bronze",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "TridentNotebook",
+        "typeProperties": {
+          "notebookId": "92296d17-60fe-b9ac-474b-e439357bef50",
+          "workspaceId": "00000000-0000-0000-0000-000000000000"
+        },
+        "policy": {
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "Gold",
+        "dependsOn": [
+          {
+            "activity": "Silver",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "MicrosoftTeams",
+        "typeProperties": {
+          "content": "<p>@{pipeline()?.TriggerEvent?.Source}@{activity('Bronze').output}@{activity('Gold').output}</p>",
+          "teamId": "aa471fee-e5a4-492f-b434-9ae133f34307",
+          "channelId": "19:dcdf21a9594c4524b92ef927fb6f22e3@thread.skype",
+          "operationType": "SendMessageInChannel",
+          "subject": {
+            "value": "Fails",
+            "type": "Expression"
+          }
+        },
+        "externalReferences": {
+          "connection": "c7b03f13-9cca-49a1-9d8f-f7cba5ba9754"
+        },
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "MicrosoftTeams1",
+        "dependsOn": [
+          {
+            "activity": "Bronze",
+            "dependencyConditions": [
+              "Failed"
+            ]
+          },
+          {
+            "activity": "Gold",
+            "dependencyConditions": [
+              "Failed"
+            ]
+          },
+          {
+            "activity": "MicrosoftTeams2",
+            "dependencyConditions": [
+              "Failed"
+            ]
+          },
+          {
+            "activity": "Silver",
+            "dependencyConditions": [
+              "Failed"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "TridentNotebook",
+        "typeProperties": {
+          "notebookId": "ad874a42-82cb-9933-4b7b-4ddaad4ca5c7",
+          "workspaceId": "00000000-0000-0000-0000-000000000000"
+        },
+        "policy": {
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "Verify_Rows_in_Gold",
+        "dependsOn": [
+          {
+            "activity": "Gold",
+            "dependencyConditions": [
+              "Completed"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "MicrosoftTeams",
+        "typeProperties": {
+          "content": "<p>@{activity('Gold').output}@{pipeline().DataFactory}</p>",
+          "teamId": "aa471fee-e5a4-492f-b434-9ae133f34307",
+          "channelId": "19:dcdf21a9594c4524b92ef927fb6f22e3@thread.skype",
+          "operationType": "SendMessageInChannel",
+          "subject": {
+            "value": "@activity('Gold').output",
+            "type": "Expression"
+          }
+        },
+        "externalReferences": {
+          "connection": "c7b03f13-9cca-49a1-9d8f-f7cba5ba9754"
+        },
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "MicrosoftTeams2",
+        "dependsOn": [
+          {
+            "activity": "Gold",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ]
+      }
+    ],
+    "concurrency": 1
+  }
+}

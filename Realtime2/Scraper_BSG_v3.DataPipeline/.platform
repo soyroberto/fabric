@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "DataPipeline",
+    "displayName": "Scraper_BSG_v3"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "d688b259-1557-a036-4cb0-c88fc6f5760b"
+  }
+}

@@ -1,0 +1,11 @@
+expression 'DirectLake - Real_timeLH' =
+		let
+		    Source = AzureStorage.DataLake("https://onelake.dfs.fabric.microsoft.com/f8a8e7cb-a246-415d-a682-ccb1108926ba/ff331aa0-30ce-4f6a-bcb5-1fdb96ca679b", [HierarchicalNavigation=true])
+		in
+		    Source
+	lineageTag: c159ccbe-b246-48b9-b6c3-fd59ecfa8b73
+
+	annotation PBI_IncludeFutureArtifacts = False
+
+	annotation PBI_RemovedChildren = [{"remoteItemId":{"analysisServicesObject":{"sourceName":null,"sourceLineageTag":"[dbo].[top_20_population_bronze_v3]"}},"objectType":"Table"},{"remoteItemId":{"analysisServicesObject":{"sourceName":null,"sourceLineageTag":"[dbo].[top_20_population_silver_v3]"}},"objectType":"Table"},{"remoteItemId":{"analysisServicesObject":{"sourceName":null,"sourceLineageTag":"[dbo].[top_20_population_silver]"}},"objectType":"Table"},{"remoteItemId":{"analysisServicesObject":{"sourceName":null,"sourceLineageTag":"[dbo].[top_20_population_gold_v2]"}},"objectType":"Table"}]
+

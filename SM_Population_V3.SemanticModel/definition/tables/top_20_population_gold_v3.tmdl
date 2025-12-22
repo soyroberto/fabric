@@ -1,0 +1,258 @@
+table top_20_population_gold_v3
+	lineageTag: fddaf395-e58c-48a4-a250-49bd268ddb26
+	sourceLineageTag: [dbo].[top_20_population_gold_v3]
+
+	measure 'Latest Population' =
+			
+			VAR MaxTimestamp = MAX('top_20_population_gold_v3'[Scrape_Timestamp])
+			RETURN
+			CALCULATE(
+			    SUM('top_20_population_gold_v3'[Population_2025_Live]),
+			    'top_20_population_gold_v3'[Scrape_Timestamp] = MaxTimestamp
+			)
+		formatString: #,0
+		lineageTag: bfd2b0dc-e3a3-4abc-aaa2-628c34cc8cf0
+
+		changedProperty = Name
+
+		changedProperty = FormatString
+
+	measure 'Total Snapshots' = COUNTROWS('top_20_population_gold_v3')
+		formatString: 0
+		lineageTag: 690ae566-493d-4d42-b8b7-1b8b958dc11e
+
+		changedProperty = Name
+
+	measure 'Total Runs' = DISTINCTCOUNT('top_20_population_gold_v3'[Scrape_Timestamp])
+		formatString: 0
+		lineageTag: 47b6203e-57c8-4a67-ad64-cf42f5607365
+
+		changedProperty = Name
+
+	measure 'Growth Per Snapshot' =
+			
+			AVERAGEX(
+			    VALUES('top_20_population_gold_v3'[Scrape_Timestamp]),
+			    [Latest Population] - AVERAGE('top_20_population_gold_v3'[Base_Pop])
+			)
+		lineageTag: bfb28588-a2a8-4032-815b-56095a2170d9
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column #
+		dataType: string
+		lineageTag: 2c5839e4-e6ab-404f-b864-e7851d5c5cc4
+		sourceLineageTag: #
+		summarizeBy: none
+		sourceColumn: #
+
+		annotation SummarizationSetBy = Automatic
+
+	column Country_or_dependency
+		dataType: string
+		lineageTag: 30d10306-6451-4be9-b916-74f010dd8bc3
+		sourceLineageTag: Country_or_dependency
+		summarizeBy: none
+		sourceColumn: Country_or_dependency
+
+		annotation SummarizationSetBy = Automatic
+
+	column Population_2025
+		dataType: double
+		lineageTag: 42a7a534-ebd6-466b-b945-6293917272dd
+		sourceLineageTag: Population_2025
+		summarizeBy: none
+		sourceColumn: Population_2025
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Yearly_Change
+		dataType: string
+		lineageTag: b7830f8a-2f3e-4421-8369-c0fa050d0e04
+		sourceLineageTag: Yearly_Change
+		summarizeBy: none
+		sourceColumn: Yearly_Change
+
+		annotation SummarizationSetBy = Automatic
+
+	column Net_Change
+		dataType: double
+		formatString: #,0.00
+		lineageTag: 3fe17aaa-cf9d-425a-82d7-d253544c68d7
+		sourceLineageTag: Net_Change
+		summarizeBy: none
+		sourceColumn: Net_Change
+
+		changedProperty = FormatString
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column Density_P/Km²
+		dataType: double
+		formatString: 0.00
+		lineageTag: 6b183124-97ce-452f-87ba-87a812e109d9
+		sourceLineageTag: Density_P/Km²
+		summarizeBy: none
+		sourceColumn: Density_P/Km²
+
+		changedProperty = DataType
+
+		changedProperty = FormatString
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column Land_Area_Km²
+		dataType: string
+		lineageTag: eef664d5-eef3-4c0e-af3f-4efd56961dce
+		sourceLineageTag: Land_Area_Km²
+		summarizeBy: none
+		sourceColumn: Land_Area_Km²
+
+		annotation SummarizationSetBy = Automatic
+
+	column Migrants_net
+		dataType: string
+		lineageTag: 91452985-cbf1-456e-9bde-2733a0190166
+		sourceLineageTag: Migrants_net
+		summarizeBy: none
+		sourceColumn: Migrants_net
+
+		annotation SummarizationSetBy = Automatic
+
+	column Fert__Rate
+		dataType: string
+		lineageTag: 5474b2eb-f61b-4b79-863f-f4fe042a7198
+		sourceLineageTag: Fert__Rate
+		summarizeBy: none
+		sourceColumn: Fert__Rate
+
+		annotation SummarizationSetBy = Automatic
+
+	column Median_Age
+		dataType: string
+		lineageTag: 6e02c937-8423-4bac-8251-46221339d59e
+		sourceLineageTag: Median_Age
+		summarizeBy: none
+		sourceColumn: Median_Age
+
+		annotation SummarizationSetBy = Automatic
+
+	column Urban_Pop_%
+		dataType: string
+		lineageTag: 34f50a44-0a35-47f5-890b-c8bb77c1d492
+		sourceLineageTag: Urban_Pop_%
+		summarizeBy: none
+		sourceColumn: Urban_Pop_%
+
+		annotation SummarizationSetBy = Automatic
+
+	column World_Share
+		dataType: string
+		lineageTag: 48924fac-18b4-444d-a998-464526757d66
+		sourceLineageTag: World_Share
+		summarizeBy: none
+		sourceColumn: World_Share
+
+		annotation SummarizationSetBy = Automatic
+
+	column Scrape_Timestamp
+		dataType: string
+		lineageTag: 24f40a7f-4a4f-4e5b-913d-5f35a700c367
+		sourceLineageTag: Scrape_Timestamp
+		summarizeBy: none
+		sourceColumn: Scrape_Timestamp
+
+		annotation SummarizationSetBy = Automatic
+
+	column Annual_Rate
+		dataType: double
+		lineageTag: 32de583b-4168-4ff0-90e5-4514e29fa0d7
+		sourceLineageTag: Annual_Rate
+		summarizeBy: none
+		sourceColumn: Annual_Rate
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Base_Pop
+		dataType: double
+		formatString: #,0
+		lineageTag: f06586f8-a81c-43ad-bcbc-0bc61889c2ee
+		sourceLineageTag: Base_Pop
+		summarizeBy: none
+		sourceColumn: Base_Pop
+
+		changedProperty = FormatString
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column Seconds_Today
+		dataType: int64
+		formatString: 0
+		lineageTag: 48d88280-3b8d-4b5a-af73-c3556156286a
+		sourceLineageTag: Seconds_Today
+		summarizeBy: none
+		sourceColumn: Seconds_Today
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column Population_2025_Live
+		dataType: int64
+		formatString: #,0
+		lineageTag: 447a18cf-f31e-4ea5-9b02-51ee4c6c4a38
+		sourceLineageTag: Population_2025_Live
+		summarizeBy: none
+		sourceColumn: Population_2025_Live
+
+		changedProperty = SummarizeBy
+
+		changedProperty = FormatString
+
+		annotation SummarizationSetBy = User
+
+	column Previous_Pop
+		dataType: int64
+		formatString: 0
+		lineageTag: 1a816fb7-0875-4738-9d84-9ad0ec9ab0dd
+		sourceLineageTag: Previous_Pop
+		summarizeBy: sum
+		sourceColumn: Previous_Pop
+
+		annotation SummarizationSetBy = Automatic
+
+	column Net_Growth_Since_Last_Run
+		dataType: int64
+		formatString: #,0
+		lineageTag: f98d3186-5e05-483e-b40b-4a3fe405172c
+		sourceLineageTag: Net_Growth_Since_Last_Run
+		summarizeBy: sum
+		sourceColumn: Net_Growth_Since_Last_Run
+
+		changedProperty = FormatString
+
+		annotation SummarizationSetBy = Automatic
+
+	partition top_20_population_gold_v3 = entity
+		mode: directLake
+		source
+			entityName: top_20_population_gold_v3
+			schemaName: dbo
+			expressionSource: 'DirectLake - Real_timeLH'
+

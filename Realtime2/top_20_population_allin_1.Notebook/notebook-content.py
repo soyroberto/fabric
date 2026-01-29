@@ -25,23 +25,25 @@
 import requests
 import pandas as pd
 import datetime
+from io import StringIO # Added this for the warning fix
 from pyspark.sql import functions as F
 
 # 1. SCRAPE DATA
 url = "https://www.worldometers.info/world-population/population-by-country/"
 response = requests.get(url)
-df_list = pd.read_html(response.text)
+# Wrapping response.text in StringIO() to fix the FutureWarning
+df_list = pd.read_html(StringIO(response.text)) 
 df_raw = df_list[0]
 
-# 2. CLEAN & TIMESTAMP IMMEDIATELY
-# We use a standard format that Spark loves
+# 2. CLEAN & TIMESTAMP
 now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
-# Rename columns and keep top 20
 df_raw = df_raw.iloc[:20, [1, 2]]
 df_raw.columns = ['Country', 'Population_2025']
 
-# 3. CONVERT TO SPARK & CALCULATE GROWTH
+# 3. CREATE SPARK DATAFRAME (The fix for your NameError)
+df_spark = spark.createDataFrame(df_raw)
+
+# 4. DEFINE GROWTH RATES defined as percentage per year
 growth_rates = {
     "India": 0.89, "China": -0.23, "United States": 0.54, "Indonesia": 0.79, 
     "Pakistan": 1.57, "Nigeria": 2.08, "Brazil": 0.38, "Bangladesh": 1.22, 
@@ -49,11 +51,9 @@ growth_rates = {
     "Egypt": 1.57, "Philippines": 0.81, "DR Congo": 3.25, "Vietnam": 0.6, 
     "Iran": 0.93, "Turkey": 0.24, "Germany": -0.56, "Thailand": -0.07
 }
-
 mapping_expr = F.create_map([F.lit(x) for x in sum(growth_rates.items(), ())])
 
-# Convert pandas to spark
-df_spark = spark.createDataFrame(df_raw)
+# 5. CALCULATE EVERYTHING
 df_final = df_spark.withColumn("Scrape_Timestamp", F.to_timestamp(F.lit(now), "yyyy-MM-dd HH:mm:ss")) \
     .withColumn("Annual_Rate", mapping_expr[F.col("Country")]) \
     .withColumn("Base_Pop", F.col("Population_2025").cast("double")) \
@@ -61,18 +61,18 @@ df_final = df_spark.withColumn("Scrape_Timestamp", F.to_timestamp(F.lit(now), "y
     .withColumn("Live_Population", 
                 F.col("Base_Pop") + (F.col("Base_Pop") * (F.col("Annual_Rate")/100) * (F.col("Seconds_Today")/31536000))) \
     .withColumn("Growth_Per_Second", 
-                (F.col("Base_Pop") * (F.col("Annual_Rate")/100)) / 31536000) # <--- NEW CALCULATION
+                (F.col("Base_Pop") * (F.col("Annual_Rate")/100)) / 31536000) \
+    .withColumn("Growth_Per_Day", 
+                (F.col("Base_Pop") * (F.col("Annual_Rate")/100)) / 365)
 
-# 4. APPEND TO HISTORY TABLE / Data model
-(df_final.select("Country", "Scrape_Timestamp", "Live_Population", "Growth_Per_Second")
+# 6. SAVE TO TABLE
+(df_final.select("Country", "Scrape_Timestamp", "Live_Population", "Growth_Per_Second", "Growth_Per_Day")
   .write
   .mode("append")
-  .option("mergeSchema", "true") # This ensures the new column is added to your existing table
+  .option("mergeSchema", "true") 
   .saveAsTable("population_growth_history"))
 
-print(f"✅ Success! Velocity calculated for {now}")
-
-
+print(f"✅ Success! Data appended for {now}")
 
 # METADATA ********************
 
@@ -116,6 +116,40 @@ print(f"✅ Success! Velocity calculated for {now}")
 # MAGIC     Live_Population,
 # MAGIC     -- Subtract current population from the population of the previous timestamp
 # MAGIC     Live_Population - LAG(Live_Population) OVER (PARTITION BY Country ORDER BY Scrape_Timestamp) AS Growth_Since_Last_Run
+# MAGIC FROM population_growth_history
+# MAGIC ORDER BY Scrape_Timestamp DESC, Country ASC;
+
+# METADATA ********************
+
+# META {
+# META   "language": "sparksql",
+# META   "language_group": "synapse_pyspark"
+# META }
+
+# CELL ********************
+
+# MAGIC %%sql
+# MAGIC SELECT Country, Scrape_Timestamp, Growth_Per_Second, Growth_Per_Day 
+# MAGIC FROM population_growth_history 
+# MAGIC ORDER BY Scrape_Timestamp DESC 
+# MAGIC LIMIT 20;
+
+# METADATA ********************
+
+# META {
+# META   "language": "sparksql",
+# META   "language_group": "synapse_pyspark"
+# META }
+
+# CELL ********************
+
+# MAGIC %%sql
+# MAGIC SELECT 
+# MAGIC     Country, 
+# MAGIC     Scrape_Timestamp, 
+# MAGIC     Live_Population,
+# MAGIC     -- This calculates the exact difference from the previous timestamp for that country
+# MAGIC     Live_Population - LAG(Live_Population) OVER (PARTITION BY Country ORDER BY Scrape_Timestamp) AS People_Added_This_Run
 # MAGIC FROM population_growth_history
 # MAGIC ORDER BY Scrape_Timestamp DESC, Country ASC;
 
